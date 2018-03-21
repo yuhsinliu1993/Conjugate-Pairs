@@ -61,20 +61,18 @@ def read_binary(file):
         yield data
 
 def online_learning(file_path, model, plot):
+    with open(file_path) as f:
+        for line in read_binary(f):
+            print("Data: {}".format(line[:-1]))
+            N = len(line) - 1
+            m = np.sum([1 if line[d]=='1' else 0 for d in range(len(line)-1)])
 
-    if model.__class__.__name__ == 'BetaBinominal':
-        with open(file_path) as f:
-            for line in read_binary(f):
-                print("Data: {}".format(line[:-1]))
-                N = len(line) - 1
-                m = np.sum([1 if line[d]=='1' else 0 for d in range(len(line)-1)])
+            print("[+] Binomial likelihood: {}/{}\n".format(m, N))
+            model = model.update(m, N - m)
+            model.print_status()
 
-                print("[+] Binomial likelihood: {}/{}\n".format(m, N))
-                model = model.update(m, N - m)
-                model.print_status()
-
-                if plot:
-                    model.plot_prior()
+            if plot:
+                model.plot_prior()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
