@@ -1,5 +1,6 @@
 import os
 import argparse
+import math
 import numpy as np
 from scipy import stats
 import matplotlib.pyplot as plt
@@ -52,6 +53,7 @@ class BetaBinominal(object):
         print("variance: %f" % self.prior_variance())
         print("---------------------------------\n")
 
+
 def read_binary(file):
     while True:
         data = file.readline()
@@ -60,6 +62,12 @@ def read_binary(file):
 
         yield data
 
+
+def binomial(p, N, m):
+    combination = math.factorial(N) / (math.factorial(m) * math.factorial(N-m))
+
+    return combination * (p ** m) * ((1-p) ** (N-m))
+
 def online_learning(file_path, model, plot):
     with open(file_path) as f:
         for line in read_binary(f):
@@ -67,9 +75,11 @@ def online_learning(file_path, model, plot):
             N = len(line) - 1
             m = np.sum([1 if line[d]=='1' else 0 for d in range(len(line)-1)])
 
-            print("[+] Binomial likelihood: {}/{}\n".format(m, N))
+            """ The maximum likelihood of Binomial will occure when m/N"""
+            print("[+] Binomial likelihood: {}/{}   MLE: {}".format(m, N, binomial(m/N, N, m)))
             model = model.update(m, N - m)
             model.print_status()
+
 
             if plot:
                 model.plot_prior()
