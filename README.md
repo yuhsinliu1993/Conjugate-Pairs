@@ -1,6 +1,6 @@
 # Conjugate Pairs
 
-1. Beta (prior) - Binomial (likelihood)  
+Beta (prior) - Binomial (likelihood)  
 
     # Run & Plot the prior distribution
     $ python BetaBinomial.py -p -f data/binary.txt
